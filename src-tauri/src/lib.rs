@@ -42,6 +42,24 @@ pub fn run() {
         .setup(|app| {
             *app.state::<DaemonState>().port.lock().unwrap() = DAEMON_PORT;
 
+            // Global push-to-talk hotkey (⌥Space): tell the webview to listen.
+            #[cfg(desktop)]
+            {
+                use tauri_plugin_global_shortcut::{
+                    Builder as ShortcutBuilder, GlobalShortcutExt, ShortcutState,
+                };
+                app.handle().plugin(
+                    ShortcutBuilder::new()
+                        .with_handler(|app, _shortcut, event| {
+                            if event.state == ShortcutState::Pressed {
+                                let _ = app.emit("voice-hotkey", ());
+                            }
+                        })
+                        .build(),
+                )?;
+                let _ = app.global_shortcut().register("Alt+Space");
+            }
+
             // Launch the bundled Go sidecar. Tauri resolves the platform binary
             // `binaries/aqnod-<target-triple>` declared in tauri.conf.json.
             let sidecar = app

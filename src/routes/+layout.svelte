@@ -9,7 +9,8 @@
   import VoiceBar from '$components/VoiceBar.svelte'
   import { presence } from '$stores/presence'
   import { app } from '$stores/app'
-  import { onDaemonReady } from '$lib/tauri'
+  import { onDaemonReady, onVoiceHotkey } from '$lib/tauri'
+  import { startListening } from '$lib/voice'
 
   const { children } = $props()
 
@@ -27,9 +28,11 @@
     presence.connect()
     hydrate()
     const off = onDaemonReady(() => hydrate())
+    const offHotkey = onVoiceHotkey(() => startListening())
     return () => {
       presence.disconnect()
       off.then((fn) => fn())
+      offHotkey.then((fn) => fn())
     }
   })
 </script>

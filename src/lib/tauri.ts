@@ -36,6 +36,13 @@ export async function onDaemonReady(cb: (url: string) => void): Promise<() => vo
   })
 }
 
+/** Fires when the global push-to-talk hotkey is pressed (Tauri only). */
+export async function onVoiceHotkey(cb: () => void): Promise<() => void> {
+  if (!isTauri) return () => {}
+  const { listen } = await import('@tauri-apps/api/event')
+  return listen('voice-hotkey', () => cb())
+}
+
 /** Subscribe to the daemon's SSE stream of presence-state ticks. */
 export async function subscribePresence(
   cb: (state: PresenceState, level: number) => void
