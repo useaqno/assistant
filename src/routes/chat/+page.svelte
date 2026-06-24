@@ -3,39 +3,66 @@
   import ChatBubble from '$components/ChatBubble.svelte'
   import Presence from '$components/Presence.svelte'
   import Icon from '$components/Icon.svelte'
-  import { api } from '$lib/api'
-  import { setVoice } from '$stores/voice'
+  import { api, streamChat } from '$lib/api'
+  import { startListening } from '$lib/voice'
+  import { app, companionName } from '$stores/app'
   import type { ChatMessage } from '$lib/types'
 
   let thread = $state<ChatMessage[]>([])
   let draft = $state('')
+  let busy = $state(false)
   let listEl: HTMLDivElement
+
+  const companion = $derived(companionName($app.persona))
 
   async function send() {
     const text = draft.trim()
-    if (!text) return
+    if (!text || busy) return
+    busy = true
     thread = [...thread, { id: `u${Date.now()}`, from: 'user', text, time: 'agora' }]
     draft = ''
     await scrollDown()
+
+    const replyId = `a${Date.now()}`
+    thread = [...thread, { id: replyId, from: 'aqno', text: '', time: 'agora', streaming: true }]
+    const idx = thread.length - 1
+
     try {
-      const reply = await api.sendChat(text)
-      thread = [...thread, reply]
-      await scrollDown()
+      await streamChat(
+        text,
+        undefined,
+        (chunk) => {
+          thread[idx] = { ...thread[idx], text: thread[idx].text + chunk }
+          scrollDown()
+        },
+        (final) => {
+          thread[idx] = { ...final, streaming: false }
+          busy = false
+          scrollDown()
+        },
+        () => {
+          busy = false
+        }
+      )
     } catch {
-      /* offline */
+      // Fallback to non-streaming send if SSE is unavailable.
+      try {
+        const reply = await api.sendChat(text)
+        thread[idx] = reply
+      } catch {
+        thread = thread.filter((_, i) => i !== idx)
+      }
+      busy = false
+      await scrollDown()
     }
   }
+
   async function scrollDown() {
     await tick()
     listEl?.scrollTo({ top: listEl.scrollHeight, behavior: 'smooth' })
   }
 
   onMount(async () => {
-    setVoice({
-      state: 'speaking',
-      transcript: 'Verifiquei o VPS — 4 containers ok, worker reiniciando.',
-      level: 0.8
-    })
     try {
       thread = await api.chat()
     } catch {
@@ -48,18 +75,17 @@
 <div class="page">
   <header class="head">
     <div class="h-left">
-      <h1>Conversa com a Íris</h1>
+      <h1>Conversa com {companion}</h1>
       <div class="ctx">
         <span class="cchip purple"
           ><Icon name="clock" size={12} stroke="var(--purple-glow)" />Sabe do seu dia</span
         >
-        <span class="cchip ok"><span class="d"></span>Conectado à VPS</span>
-        <span class="cchip mut">Memória · 142 itens</span>
+        <span class="cchip mut">{thread.length} mensagens</span>
       </div>
     </div>
     <div class="corner">
-      <Presence state="speaking" size={46} level={0.8} />
-      <span class="corner-lbl">Falando</span>
+      <Presence state="idle" size={46} level={0.6} />
+      <span class="corner-lbl">{companion}</span>
     </div>
   </header>
 
@@ -67,7 +93,7 @@
     {#each thread as m (m.id)}
       <ChatBubble
         from={m.from}
-        name={m.from === 'aqno' ? 'Íris' : ''}
+        name={m.from === 'aqno' ? companion : ''}
         time={m.time}
         streaming={m.streaming}
       >
@@ -91,10 +117,10 @@
     <div class="composer">
       <input
         bind:value={draft}
-        placeholder="Pergunte ou comande a Íris…"
+        placeholder="Pergunte ou comande {companion}…"
         onkeydown={(e) => e.key === 'Enter' && send()}
       />
-      <button class="mic" aria-label="voz"
+      <button class="mic" aria-label="voz" onclick={() => startListening()}
         ><Icon name="mic" size={18} stroke="var(--purple-glow)" /></button
       >
       <button class="send" onclick={send} aria-label="enviar"
@@ -102,7 +128,7 @@
       >
     </div>
     <div class="composer-hint">
-      A Íris usa seu contexto e a memória conectada · <span class="mono">⌘K</span> para comandos
+      {companion} usa seu contexto e a memória conectada · comandos por texto ou voz
     </div>
   </div>
 </div>
@@ -145,18 +171,6 @@
     background: var(--purple-012);
     border: 1px solid var(--purple-024);
     color: var(--purple-glow);
-  }
-  .cchip.ok {
-    background: var(--success-bg);
-    border: 1px solid rgba(74, 222, 128, 0.3);
-    color: var(--success);
-  }
-  .cchip.ok .d {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--success);
-    box-shadow: 0 0 6px var(--success);
   }
   .cchip.mut {
     background: rgba(255, 255, 255, 0.05);
@@ -264,8 +278,5 @@
     font-size: 11.5px;
     color: var(--text-3);
     margin-top: 9px;
-  }
-  .mono {
-    font-family: var(--font-mono);
   }
 </style>

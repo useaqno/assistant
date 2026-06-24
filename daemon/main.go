@@ -18,6 +18,7 @@ import (
 	"syscall"
 
 	"aqnod/internal/httpapi"
+	"aqnod/internal/llm"
 	"aqnod/internal/store"
 )
 
@@ -43,7 +44,8 @@ func main() {
 	log.Printf("aqnod: database ready at %s (fts=%v)", path, st.HasFTS())
 
 	hub := httpapi.NewHub()
-	api := httpapi.New(httpapi.Deps{Store: st, Hub: hub})
+	brain := llm.NewBrain(st)
+	api := httpapi.New(httpapi.Deps{Store: st, Hub: hub, Brain: brain})
 
 	addr := fmt.Sprintf("127.0.0.1:%d", *port)
 	srv := &http.Server{Addr: addr, Handler: api.Handler()}
