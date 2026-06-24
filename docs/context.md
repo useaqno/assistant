@@ -681,46 +681,63 @@ Como o usuário opera múltiplas empresas (algumas com NDA e dados sensíveis), 
 
 ## 18. Estrutura de pastas do projeto
 
+> Estado atual do repositório (fase 0 — esqueleto). Módulos como `voice/`, `llm/`, `store/` etc. descritos nas seções anteriores são o desenho alvo; ainda não existem como pacotes no daemon.
+
 ```
-aqno/
+aqno/                          # raiz do repositório (pasta `app/`)
+├── package.json               # scripts pnpm (dev, tauri, daemon:sidecar, app:dev, …)
+├── vite.config.ts
+├── svelte.config.js
+├── tsconfig.json
+├── README.md
+│
+├── scripts/
+│   └── build-sidecar.mjs      # compila o daemon Go e nomeia para o triple do Rust
+│
 ├── src-tauri/                 # Shell Rust (Tauri 2)
 │   ├── src/
-│   │   ├── main.rs            # bootstrap, tray, hotkey global
-│   │   ├── commands.rs        # comandos IPC expostos à UI
-│   │   └── sidecar.rs         # spawn e ponte com o daemon Go
+│   │   ├── main.rs            # entrypoint → aqno_lib::run()
+│   │   └── lib.rs             # spawn do sidecar, IPC daemon_url, evento daemon-ready
+│   ├── binaries/              # artefatos do aqnod (gitignored; ver README)
+│   │   └── README.md
+│   ├── capabilities/
+│   │   └── default.json
+│   ├── icons/                 # ícones do app
+│   ├── build.rs
 │   ├── tauri.conf.json
 │   └── Cargo.toml
 │
 ├── src/                       # Frontend SvelteKit
+│   ├── app.html
+│   ├── app.css                # estilos globais
 │   ├── lib/
-│   │   ├── components/        # presença, cards, chips, grafo, chat
-│   │   ├── stores/            # estado da UI
-│   │   └── ipc.ts             # wrapper de invoke + eventos
+│   │   ├── components/        # Presence, VoiceBar, Card, GraphView, ChatBubble, Sidebar, …
+│   │   ├── stores/            # presence.ts, voice.ts
+│   │   ├── styles/
+│   │   │   └── tokens.css     # design system (tokens)
+│   │   ├── api.ts             # cliente HTTP tipado para o daemon
+│   │   ├── tauri.ts           # bridge Tauri (invoke + eventos)
+│   │   └── types.ts           # tipos compartilhados da UI
 │   ├── routes/
+│   │   ├── +layout.svelte
+│   │   ├── +layout.ts
 │   │   ├── +page.svelte       # Home / companheiro
-│   │   ├── onboarding/
+│   │   ├── persona/           # onboarding / configuração da persona
 │   │   ├── agenda/
 │   │   ├── analise/
 │   │   ├── vps/
 │   │   ├── chat/
-│   │   └── grafo/
-│   └── app.css                # design system (tokens)
+│   │   └── rede/              # grafo de conhecimento
+│   └── static/
+│       └── favicon.png
 │
-├── daemon/                    # Daemon Go (sidecar)
-│   ├── cmd/aqnod/main.go      # entrypoint
-│   ├── internal/
-│   │   ├── voice/             # wake word, VAD, STT, TTS, orquestrador
-│   │   ├── llm/               # camada provider-agnostic
-│   │   ├── calendar/          # RRULE, conflitos
-│   │   ├── scheduler/         # briefings, alertas
-│   │   ├── vps/               # SSH, métricas, ações
-│   │   ├── graph/             # entidades/relações/embeddings
-│   │   ├── store/             # acesso SQLite (libSQL)
-│   │   └── ipc/               # servidor do socket local
+├── daemon/                    # Daemon Go (sidecar `aqnod`)
+│   ├── main.go                # servidor HTTP (REST + SSE), handshake AQNOD_LISTENING
+│   ├── data.go                # fixtures / dados mock para a UI
 │   └── go.mod
 │
 └── docs/
-    └── ARQUITETURA.md         # este documento
+    └── context.md             # este documento
 ```
 
 ---
