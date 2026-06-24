@@ -7,10 +7,13 @@
   import Button from '$components/Button.svelte'
   import Icon from '$components/Icon.svelte'
   import { api } from '$lib/api'
+  import { fmtLong, todayISO } from '$lib/dates'
   import type { Analysis, AppHealth } from '$lib/types'
 
   let a = $state<Analysis | null>(null)
   let view = $state('Hoje')
+
+  const today = fmtLong(todayISO())
 
   const dataColor: Record<string, string> = {
     violet: 'var(--data-violet)',
@@ -44,7 +47,7 @@
 <div class="page">
   <header class="head">
     <div>
-      <div class="overline">Segunda · 23 jun · 09:14</div>
+      <div class="overline">{today}</div>
       <h1>Briefing diário</h1>
     </div>
     <SegmentedControl options={['Hoje', 'Semana', 'Mês']} bind:value={view} size="sm" />
