@@ -59,11 +59,11 @@ func New(dir, mirrorBase string) *Manager {
 
 // Status reports presence/verification of a tier on disk.
 type Status struct {
-	Tier      Tier   `json:"tier"`
-	Present   bool   `json:"present"`
-	Verified  bool   `json:"verified"`
-	Bytes     int64  `json:"bytes"`
-	SizeBytes int64  `json:"sizeBytes"`
+	Tier      Tier  `json:"tier"`
+	Present   bool  `json:"present"`
+	Verified  bool  `json:"verified"`
+	Bytes     int64 `json:"bytes"`
+	SizeBytes int64 `json:"sizeBytes"`
 }
 
 // Path returns the local file path for a tier (whether or not it exists).

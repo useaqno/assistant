@@ -53,8 +53,8 @@ func NewTranscriber(opts Options) Transcriber {
 // unavailable is the no-engine fallback.
 type unavailable struct{}
 
-func (unavailable) Name() string      { return "none" }
-func (unavailable) Available() bool   { return false }
+func (unavailable) Name() string    { return "none" }
+func (unavailable) Available() bool { return false }
 func (unavailable) TranscribeWAV(context.Context, []byte, string) (string, error) {
 	return "", ErrNoEngine
 }
@@ -77,8 +77,8 @@ func FloatsToWAV(samples []float32, sampleRate int) []byte {
 	// fmt chunk
 	buf.WriteString("fmt ")
 	binary.Write(&buf, binary.LittleEndian, uint32(16))
-	binary.Write(&buf, binary.LittleEndian, uint16(1))  // PCM
-	binary.Write(&buf, binary.LittleEndian, uint16(1))  // mono
+	binary.Write(&buf, binary.LittleEndian, uint16(1)) // PCM
+	binary.Write(&buf, binary.LittleEndian, uint16(1)) // mono
 	binary.Write(&buf, binary.LittleEndian, uint32(sampleRate))
 	binary.Write(&buf, binary.LittleEndian, uint32(sampleRate*2)) // byte rate
 	binary.Write(&buf, binary.LittleEndian, uint16(2))            // block align

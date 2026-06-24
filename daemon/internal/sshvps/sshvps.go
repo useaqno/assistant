@@ -114,7 +114,7 @@ func shellQuote(s string) string {
 func offline() model.Vps {
 	return model.Vps{
 		Host: "—", Uptime: "sem servidor", Online: false,
-		CPUDetail: "cadastre um servidor em Ajustes",
+		CPUDetail:  "cadastre um servidor em Ajustes",
 		Containers: []model.Container{},
 		Logs:       []model.LogLine{{Time: "--:--:--", Level: "INFO", Body: "nenhum servidor SSH configurado"}},
 	}
@@ -123,7 +123,7 @@ func offline() model.Vps {
 func offlineErr(srv model.Server, err error) model.Vps {
 	return model.Vps{
 		Host: srv.User + "@" + srv.Host, Uptime: "offline", Online: false, Warnings: 1,
-		CPUDetail: "conexão indisponível",
+		CPUDetail:  "conexão indisponível",
 		Containers: []model.Container{},
 		Logs:       []model.LogLine{{Time: time.Now().Format("15:04:05"), Level: "WARN", Body: err.Error()}},
 	}

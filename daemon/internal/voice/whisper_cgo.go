@@ -3,13 +3,13 @@
 // whisper.cpp in-process engine (Metal-accelerated on Apple Silicon).
 //
 // Build prerequisites (see scripts/build-sidecar.mjs and docs WS4 design):
-//   1. Vendor whisper.cpp at third_party/whisper.cpp (pinned tag).
-//   2. Build the static lib with Metal embedded:
-//        cmake -S third_party/whisper.cpp -B build_go -DBUILD_SHARED_LIBS=OFF \
-//          -DGGML_METAL=ON -DGGML_METAL_EMBED_LIBRARY=ON
-//        cmake --build build_go --target whisper -j
-//   3. go build -tags whisper_cgo with C_INCLUDE_PATH/LIBRARY_PATH pointing at
-//      the headers and the build_go/*/*.a archives.
+//  1. Vendor whisper.cpp at third_party/whisper.cpp (pinned tag).
+//  2. Build the static lib with Metal embedded:
+//     cmake -S third_party/whisper.cpp -B build_go -DBUILD_SHARED_LIBS=OFF \
+//     -DGGML_METAL=ON -DGGML_METAL_EMBED_LIBRARY=ON
+//     cmake --build build_go --target whisper -j
+//  3. go build -tags whisper_cgo with C_INCLUDE_PATH/LIBRARY_PATH pointing at
+//     the headers and the build_go/*/*.a archives.
 package voice
 
 import (
@@ -77,8 +77,8 @@ func newWhisperTranscriber(modelPath string) (Transcriber, bool) {
 	return &whisperTranscriber{modelPath: modelPath, model: model}, true
 }
 
-func (w *whisperTranscriber) Name() string     { return "whisper.cpp" }
-func (w *whisperTranscriber) Available() bool   { return w.model != nil }
+func (w *whisperTranscriber) Name() string    { return "whisper.cpp" }
+func (w *whisperTranscriber) Available() bool { return w.model != nil }
 
 func (w *whisperTranscriber) TranscribeWAV(_ context.Context, wav []byte, lang string) (string, error) {
 	samples, err := decodeWAVToFloat32(wav)

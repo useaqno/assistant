@@ -28,12 +28,12 @@ func Tools() []Tool {
 		{
 			Name:        "consultar_agenda",
 			Description: "Resume a agenda e tarefas do dia.",
-			Parameters:  object(map[string]any{}, ),
+			Parameters:  object(map[string]any{}),
 		},
 		{
 			Name:        "consultar_vps",
 			Description: "Consulta o estado dos servidores/VPS.",
-			Parameters:  object(map[string]any{}, ),
+			Parameters:  object(map[string]any{}),
 		},
 		{
 			Name:        "registrar_nota",

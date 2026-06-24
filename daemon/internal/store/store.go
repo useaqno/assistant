@@ -149,10 +149,10 @@ func (s *Store) contextMeta(name string) (id int64, color string) {
 
 // Exception is a per-occurrence override.
 type Exception struct {
-	Date       string
-	Type       string
-	NewStart   string
-	NewEnd     string
+	Date     string
+	Type     string
+	NewStart string
+	NewEnd   string
 }
 
 // RawEvent is a stored event (recurring or single) before expansion.

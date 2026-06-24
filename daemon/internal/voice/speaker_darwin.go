@@ -15,7 +15,7 @@ type saySpeaker struct{}
 // NewSpeaker returns the platform speaker.
 func NewSpeaker() Speaker { return saySpeaker{} }
 
-func (saySpeaker) Name() string    { return "macos-say" }
+func (saySpeaker) Name() string { return "macos-say" }
 func (saySpeaker) Available() bool {
 	_, err := exec.LookPath("say")
 	return err == nil

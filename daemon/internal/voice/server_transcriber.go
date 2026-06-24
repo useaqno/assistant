@@ -20,7 +20,7 @@ type serverTranscriber struct {
 }
 
 func (s *serverTranscriber) Name() string    { return "whisper-server" }
-func (s *serverTranscriber) Available() bool  { return s.base != "" }
+func (s *serverTranscriber) Available() bool { return s.base != "" }
 
 func (s *serverTranscriber) TranscribeWAV(ctx context.Context, wav []byte, lang string) (string, error) {
 	var body bytes.Buffer

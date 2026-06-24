@@ -16,7 +16,7 @@ type Context struct {
 type Persona struct {
 	Name      string `json:"name"`
 	Owner     string `json:"owner"`
-	Avatar    string `json:"avatar"`  // orbe | animal | personagem | imagem
+	Avatar    string `json:"avatar"` // orbe | animal | personagem | imagem
 	AvatarRef string `json:"avatarRef,omitempty"`
 	AuraColor string `json:"auraColor"`
 	Voice     string `json:"voice,omitempty"`
@@ -27,20 +27,20 @@ type Persona struct {
 // Event is a calendar entry. Recurring events carry an RRULE; concrete
 // occurrences returned by a range query also fill Date/StartMin/EndMin.
 type Event struct {
-	ID         string `json:"id"`
-	ContextID  string `json:"contextId,omitempty"`
-	Title      string `json:"title"`
-	Context    string `json:"context"` // context label for display
-	Color      string `json:"color"`
-	Start      string `json:"start"` // 'HH:MM'
-	End        string `json:"end"`
-	StartMin   int    `json:"startMin"`
-	EndMin     int    `json:"endMin"`
-	Kind       string `json:"kind"`           // event|focus|personal
-	Conflict   bool   `json:"conflict"`
-	RRule      string `json:"rrule,omitempty"`
-	Date       string `json:"date,omitempty"` // 'YYYY-MM-DD' (occurrence date)
-	ReminderM  int    `json:"reminderMin,omitempty"`
+	ID          string `json:"id"`
+	ContextID   string `json:"contextId,omitempty"`
+	Title       string `json:"title"`
+	Context     string `json:"context"` // context label for display
+	Color       string `json:"color"`
+	Start       string `json:"start"` // 'HH:MM'
+	End         string `json:"end"`
+	StartMin    int    `json:"startMin"`
+	EndMin      int    `json:"endMin"`
+	Kind        string `json:"kind"` // event|focus|personal
+	Conflict    bool   `json:"conflict"`
+	RRule       string `json:"rrule,omitempty"`
+	Date        string `json:"date,omitempty"` // 'YYYY-MM-DD' (occurrence date)
+	ReminderM   int    `json:"reminderMin,omitempty"`
 	OriginVoice string `json:"originVoice,omitempty"`
 }
 
@@ -206,8 +206,8 @@ type Vps struct {
 
 // Bootstrap is the initial app state (IPC app.bootstrap).
 type Bootstrap struct {
-	Persona    Persona           `json:"persona"`
-	Contexts   []Context         `json:"contexts"`
-	Onboarded  bool              `json:"onboarded"`
-	Config     map[string]string `json:"config"`
+	Persona   Persona           `json:"persona"`
+	Contexts  []Context         `json:"contexts"`
+	Onboarded bool              `json:"onboarded"`
+	Config    map[string]string `json:"config"`
 }
