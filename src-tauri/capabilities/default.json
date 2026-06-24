@@ -1,0 +1,33 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capabilities for the main Aqno window: core APIs, events, and permission to spawn the bundled aqnod sidecar.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:event:default",
+    "core:window:default",
+    "core:app:default",
+    "shell:allow-open",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "binaries/aqnod",
+          "sidecar": true,
+          "args": ["--port", "8787"]
+        }
+      ]
+    },
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "binaries/aqnod",
+          "sidecar": true,
+          "args": ["--port", "8787"]
+        }
+      ]
+    }
+  ]
+}

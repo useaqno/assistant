@@ -1,0 +1,142 @@
+/* ============================================================
+   AQNO · DESIGN TOKENS  (ported from the Aqno Design System)
+   Dark canvas with a violet undertone. Purple is used as LIGHT
+   (glow, gradients, active states) — never flooding screens.
+   ============================================================ */
+:root {
+  /* --- Base & surfaces (elevation by clarity steps) --- */
+  --bg-base: #0c0a14;
+  --surface-1: #15121f;
+  --surface-2: #1c1828;
+  --surface-3: #251f35;
+  --surface-sunken: #0a0810;
+
+  /* --- Hairline borders --- */
+  --border-violet: rgba(168, 148, 255, 0.1);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --highlight-top: rgba(168, 148, 255, 0.16);
+
+  /* --- Purple (the "presence" / brand light) --- */
+  --purple-deep: #6d28d9;
+  --purple: #8b5cf6;
+  --purple-glow: #a78bfa;
+  --purple-glow-2: #c4b5fd;
+  --purple-100: #2a2140;
+  --purple-070: rgba(139, 92, 246, 0.7);
+  --purple-024: rgba(139, 92, 246, 0.24);
+  --purple-012: rgba(139, 92, 246, 0.12);
+
+  /* --- Text ramp --- */
+  --text-1: #eceaf6;
+  --text-2: #a09bb5;
+  --text-3: #65607a;
+  --text-on-purple: #ffffff;
+
+  /* --- Semantic states --- */
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #60a5fa;
+  --success-bg: rgba(74, 222, 128, 0.12);
+  --warning-bg: rgba(251, 191, 36, 0.12);
+  --danger-bg: rgba(248, 113, 113, 0.12);
+  --info-bg: rgba(96, 165, 250, 0.12);
+
+  /* --- Data / context palette --- */
+  --data-violet: #a78bfa;
+  --data-teal: #5eead4;
+  --data-amber: #fbbf24;
+  --data-rose: #fb7185;
+  --data-blue: #60a5fa;
+
+  /* --- Aliases --- */
+  --accent: var(--purple);
+  --focus-ring: var(--purple-glow);
+
+  /* --- Presence gradients --- */
+  --grad-presence: radial-gradient(circle at 50% 42%, var(--purple-glow-2) 0%, var(--purple) 42%, var(--purple-deep) 100%);
+  --grad-aura: radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.55) 0%, rgba(139, 92, 246, 0) 70%);
+  --grad-active: linear-gradient(135deg, var(--purple) 0%, var(--purple-deep) 100%);
+
+  /* --- Type --- */
+  --font-display: 'Geist', 'Inter Variable', system-ui, sans-serif;
+  --font-ui: 'Geist', 'Inter Variable', system-ui, sans-serif;
+  --font-body: 'Inter Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', monospace;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --tracking-display: -0.02em;
+  --tracking-tight: -0.01em;
+  --tracking-caps: 0.08em;
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+
+  /* --- Radii --- */
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-input: 12px;
+  --radius-md: 14px;
+  --radius-card: 18px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* --- Layout --- */
+  --sidebar-w: 248px;
+  --voicebar-h: 72px;
+
+  /* --- Shadows & glow --- */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-3: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --shadow-modal: 0 32px 80px rgba(0, 0, 0, 0.6);
+  --glow-sm: 0 0 0 1px var(--purple-024), 0 0 12px rgba(139, 92, 246, 0.3);
+  --glow-md: 0 0 24px rgba(139, 92, 246, 0.4);
+  --glow-presence: 0 0 60px rgba(167, 139, 250, 0.55), 0 0 120px rgba(139, 92, 246, 0.3);
+  --ring: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--focus-ring);
+  --blur-panel: saturate(140%) blur(20px);
+  --blur-subtle: saturate(120%) blur(8px);
+
+  /* --- Motion --- */
+  --dur-fast: 140ms;
+  --dur-base: 220ms;
+  --dur-slow: 300ms;
+  --dur-breath: 4200ms;
+  --dur-shimmer: 1600ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-organic: cubic-bezier(0.45, 0.05, 0.25, 1);
+  --transition-base: all var(--dur-base) var(--ease-out);
+}
+
+/* --- Presence keyframes (shared by the Presence component) --- */
+@keyframes aqno-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.92; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+@keyframes aqno-ripple {
+  0% { transform: scale(0.9); opacity: 0.55; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes aqno-shimmer {
+  0%, 100% { opacity: 0.5; filter: brightness(0.9); }
+  50% { opacity: 1; filter: brightness(1.25); }
+}
+@keyframes aqno-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes aqno-wave {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-breath: 0ms; --dur-shimmer: 0ms; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

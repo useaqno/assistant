@@ -1,0 +1,28 @@
+[package]
+name = "aqno"
+version = "0.1.0"
+description = "Aqno — voice-first desktop companion"
+authors = ["Aqno"]
+edition = "2021"
+
+# The library holds the app logic so it can be reused by mobile targets;
+# main.rs is a thin entrypoint.
+[lib]
+name = "aqno_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
