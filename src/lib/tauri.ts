@@ -36,6 +36,17 @@ export async function onDaemonReady(cb: (url: string) => void): Promise<() => vo
   })
 }
 
+/** Whether this is a packaged build (mic/speech only work in the .app bundle). */
+export async function isBundled(): Promise<boolean> {
+  if (!isTauri) return false
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    return await invoke<boolean>('is_bundled')
+  } catch {
+    return false
+  }
+}
+
 /** Fires when the global push-to-talk hotkey is pressed (Tauri only). */
 export async function onVoiceHotkey(cb: () => void): Promise<() => void> {
   if (!isTauri) return () => {}

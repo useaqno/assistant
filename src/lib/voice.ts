@@ -7,7 +7,7 @@
 
 import { get } from 'svelte/store'
 import { api } from './api'
-import { getDaemonUrl } from './tauri'
+import { getDaemonUrl, isBundled, isTauri } from './tauri'
 import { setVoice } from '$stores/voice'
 import { presence } from '$stores/presence'
 import { app } from '$stores/app'
@@ -54,11 +54,32 @@ function drive(
 /** Begin a push-to-talk capture. Idempotent. */
 export function startListening(): void {
   if (active) return
+  void begin()
+}
+
+async function begin(): Promise<void> {
+  if (active) return
   const lang = get(app).config['voice.stt_lang'] || 'pt'
+
+  // In the packaged macOS app the WKWebView can capture audio (the bundle's
+  // Info.plist grants mic/speech). In `tauri dev` (a bare binary launched from a
+  // terminal) macOS TCC aborts the process on any mic/speech access, so we must
+  // NOT call getUserMedia/SpeechRecognition there.
+  if (isTauri) {
+    if (!(await isBundled())) {
+      drive('idle', {
+        transcript: '',
+        hint: 'Voz disponível no app instalado (make run) ou no navegador (pnpm dev).'
+      })
+      return
+    }
+    startNative(lang)
+    return
+  }
+
+  // Browser (pnpm dev): prefer Web Speech, fall back to the native WS path.
   rec = recognizer()
   if (!rec) {
-    // No Web Speech (e.g. packaged WKWebView): stream PCM to the daemon's
-    // whisper engine over WebSocket.
     startNative(lang)
     return
   }

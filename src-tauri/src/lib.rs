@@ -34,11 +34,19 @@ fn daemon_url(state: tauri::State<DaemonState>) -> String {
     format!("http://127.0.0.1:{}", port)
 }
 
+/// Whether this is a packaged (release) build. In `tauri dev` (debug, no .app
+/// bundle) macOS TCC refuses microphone/speech access and aborts the process,
+/// so the webview avoids capturing audio unless bundled.
+#[tauri::command]
+fn is_bundled() -> bool {
+    !cfg!(debug_assertions)
+}
+
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .manage(DaemonState::default())
-        .invoke_handler(tauri::generate_handler![daemon_url])
+        .invoke_handler(tauri::generate_handler![daemon_url, is_bundled])
         .setup(|app| {
             *app.state::<DaemonState>().port.lock().unwrap() = DAEMON_PORT;
 
