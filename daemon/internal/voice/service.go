@@ -108,6 +108,13 @@ func (s *Service) Engine() (string, bool) {
 	return t.Name(), t.Available()
 }
 
+// AppleAvailable reports whether the Apple SpeechAnalyzer helper is usable
+// (macOS 26+ with the helper present), without changing the active engine.
+func (s *Service) AppleAvailable() bool {
+	_, ok := newAppleTranscriber(speechBin())
+	return ok
+}
+
 // Transcribe runs STT on a 16-bit PCM WAV.
 func (s *Service) Transcribe(ctx context.Context, wav []byte) (string, error) {
 	lang := s.st.ConfigVal("voice.stt_lang", "pt")

@@ -77,6 +77,7 @@ func (s *Server) Handler() http.Handler {
 
 	// Voice
 	mux.HandleFunc("POST /v1/voice/intent", s.handleVoiceIntent)
+	mux.HandleFunc("GET /v1/voice/engine", s.handleVoiceEngine)
 	mux.HandleFunc("GET /v1/voice/models", s.handleVoiceModels)
 	mux.HandleFunc("POST /v1/voice/models/{tier}", s.handleDownloadModel)
 	mux.HandleFunc("POST /v1/voice/speak", s.handleSpeak)

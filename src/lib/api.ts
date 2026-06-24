@@ -118,7 +118,9 @@ export const api = {
   llmKeyStatus: (provider: string) =>
     get<{ provider: string; configured: boolean }>(`/v1/llm/key?provider=${provider}`),
 
-  // voice models
+  // voice models / engine
+  voiceEngine: () =>
+    get<{ active: string; available: boolean; apple: boolean }>('/v1/voice/engine'),
   voiceModels: () => get<VoiceModel[]>('/v1/voice/models'),
   downloadVoiceModel: (tier: string) =>
     send<{ ok: boolean; status?: string }>('POST', `/v1/voice/models/${tier}`, {})

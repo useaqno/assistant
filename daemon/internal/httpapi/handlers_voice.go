@@ -14,6 +14,19 @@ import (
 	"aqnod/internal/modelmanager"
 )
 
+func (s *Server) handleVoiceEngine(w http.ResponseWriter, _ *http.Request) {
+	if s.deps.Voice == nil {
+		writeJSON(w, http.StatusOK, map[string]any{"active": "none", "available": false, "apple": false})
+		return
+	}
+	name, ok := s.deps.Voice.Engine()
+	writeJSON(w, http.StatusOK, map[string]any{
+		"active":    name,
+		"available": ok,
+		"apple":     s.deps.Voice.AppleAvailable(),
+	})
+}
+
 func (s *Server) handleVoiceModels(w http.ResponseWriter, _ *http.Request) {
 	if s.deps.Voice == nil {
 		writeJSON(w, http.StatusOK, []any{})

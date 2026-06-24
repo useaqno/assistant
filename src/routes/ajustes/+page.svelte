@@ -20,6 +20,11 @@
   let servers = $state<Server[]>([])
   let llmKey = $state('')
   let keyConfigured = $state(false)
+  let engine = $state<{ active: string; available: boolean; apple: boolean }>({
+    active: 'none',
+    available: false,
+    apple: false
+  })
   let toast = $state('')
 
   // new server form
@@ -38,6 +43,13 @@
     ollama: 'Ollama'
   }
   const tiers = ['small', 'medium', 'large-v3-turbo']
+  const sttEngines = ['whisper', 'apple', 'auto']
+  const engineLabels: Record<string, string> = {
+    'whisper.cpp': 'whisper.cpp (local)',
+    'whisper-server': 'whisper server',
+    'apple-speechanalyzer': 'Apple SpeechAnalyzer',
+    none: 'nenhum'
+  }
   const provider = $derived(cfg['llm.provider'] ?? 'anthropic')
   const showBaseUrl = $derived(provider === 'openai_compatible' || provider === 'ollama')
 
@@ -62,6 +74,20 @@
       servers = []
     }
     refreshKeyStatus()
+    refreshEngine()
+  }
+
+  async function refreshEngine() {
+    try {
+      engine = await api.voiceEngine()
+    } catch {
+      engine = { active: 'none', available: false, apple: false }
+    }
+  }
+
+  async function setEngine(v: string) {
+    saveConfig0('voice.stt_engine', v)
+    await refreshEngine()
   }
 
   async function refreshKeyStatus() {
@@ -280,6 +306,22 @@
     <!-- Voz -->
     <section class="card">
       <div class="s-title">Voz</div>
+      <div class="field">
+        <span>Motor de reconhecimento (STT)</span>
+        <SegmentedControl
+          options={sttEngines}
+          value={cfg['voice.stt_engine'] ?? 'whisper'}
+          onchange={setEngine}
+          full
+        />
+      </div>
+      <p class="note">
+        Ativo agora: <b>{engineLabels[engine.active] ?? engine.active}</b>
+        {#if !engine.available}· nenhum motor pronto — baixe um modelo abaixo{/if}
+        {#if cfg['voice.stt_engine'] === 'apple' && !engine.apple}
+          · Apple SpeechAnalyzer indisponível (requer macOS 26)
+        {/if}
+      </p>
       <div class="field">
         <span>Qualidade do modelo (whisper)</span>
         <SegmentedControl
