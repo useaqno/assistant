@@ -97,13 +97,48 @@ func (b *Brain) respond(text, contextHint string) (string, *model.ChatRef) {
 		return b.execAction(action)
 	}
 
-	// Open conversation: use the LLM when configured, else a grounded canned reply.
-	if c, cfg, ok := b.client(); ok {
+	// Open conversation: respect per-context privacy (local_only never hits cloud).
+	mode := b.contextAIMode(action.Context)
+	if c, cfg, ok := b.clientFor(mode, action.Context); ok {
 		if reply, err := b.converse(c, cfg, text); err == nil && reply != "" {
 			return reply, nil
 		}
 	}
 	return b.cannedAnswer(text), nil
+}
+
+// contextAIMode returns the ai_mode of a context label ("" if unknown).
+func (b *Brain) contextAIMode(name string) string {
+	if name == "" {
+		return ""
+	}
+	ctxs, _ := b.st.Contexts()
+	for _, c := range ctxs {
+		if c.Label == name {
+			return c.AIMode
+		}
+	}
+	return ""
+}
+
+// clientFor picks a provider, forcing the local model for local_only contexts
+// and auditing any blocked cloud attempt (docs §6.3, §17).
+func (b *Brain) clientFor(mode, ctxName string) (LLM, Config, bool) {
+	if mode == "local_only" && isCloud(b.config().Provider) {
+		_ = b.st.AddAudit("llm", "blocked_cloud", ctxName)
+		local := Config{
+			Provider: "ollama",
+			Model:    b.st.ConfigVal("llm.local_model", "llama3.1"),
+			BaseURL:  b.st.ConfigVal("llm.local_base_url", ""),
+		}
+		c, ok := NewClient(local)
+		return c, local, ok
+	}
+	return b.client()
+}
+
+func isCloud(p string) bool {
+	return p == "anthropic" || p == "openai" || p == "openai_compatible"
 }
 
 // execAction runs a tool and returns a human confirmation + UI ref.

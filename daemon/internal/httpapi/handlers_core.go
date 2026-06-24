@@ -79,6 +79,22 @@ func (s *Server) handleContexts(w http.ResponseWriter, _ *http.Request) {
 	writeJSON(w, http.StatusOK, contexts)
 }
 
+func (s *Server) handleContextAIMode(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Label string `json:"label"`
+		Mode  string `json:"mode"`
+	}
+	if err := readJSON(r, &body); err != nil || body.Label == "" {
+		writeErr(w, http.StatusBadRequest, "label and mode required")
+		return
+	}
+	if err := s.deps.Store.SetContextAIMode(body.Label, body.Mode); err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"ok": true})
+}
+
 func (s *Server) handleCreateContext(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		Label  string `json:"label"`

@@ -60,6 +60,8 @@ export const api = {
   contexts: () => get<Context[]>('/v1/contexts'),
   createContext: (label: string, color: string, aiMode: string) =>
     send<Context>('POST', '/v1/contexts', { label, color, aiMode }),
+  setContextAIMode: (label: string, mode: string) =>
+    send<{ ok: boolean }>('POST', '/v1/contexts/ai_mode', { label, mode }),
 
   // dashboards
   today: () => get<TodayBrief>('/v1/today'),
@@ -108,7 +110,26 @@ export const api = {
   servers: () => get<Server[]>('/v1/servers'),
   createServer: (s: Partial<Server> & { secret?: string }) =>
     send<{ ok: boolean; id: string }>('POST', '/v1/servers', s),
-  deleteServer: (id: string) => send<{ ok: boolean }>('DELETE', `/v1/servers/${id}`)
+  deleteServer: (id: string) => send<{ ok: boolean }>('DELETE', `/v1/servers/${id}`),
+
+  // llm key (stored in the Keychain by the daemon)
+  setLLMKey: (provider: string, key: string) =>
+    send<{ ok: boolean }>('POST', '/v1/llm/key', { provider, key }),
+  llmKeyStatus: (provider: string) =>
+    get<{ provider: string; configured: boolean }>(`/v1/llm/key?provider=${provider}`),
+
+  // voice models
+  voiceModels: () => get<VoiceModel[]>('/v1/voice/models'),
+  downloadVoiceModel: (tier: string) =>
+    send<{ ok: boolean; status?: string }>('POST', `/v1/voice/models/${tier}`, {})
+}
+
+export interface VoiceModel {
+  tier: string
+  present: boolean
+  verified: boolean
+  bytes: number
+  sizeBytes: number
 }
 
 /** Stream a chat reply token-by-token over SSE. Returns a cancel fn. */

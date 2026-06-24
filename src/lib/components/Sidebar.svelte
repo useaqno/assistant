@@ -13,7 +13,6 @@
 
   const nav = [
     { href: '/', label: 'Início', icon: 'home' },
-    { href: '/persona', label: 'Persona', icon: 'persona' },
     { href: '/agenda', label: 'Agenda', icon: 'agenda' },
     { href: '/analise', label: 'Análise', icon: 'chart' },
     { href: '/vps', label: 'VPS', icon: 'server' },

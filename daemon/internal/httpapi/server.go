@@ -45,6 +45,7 @@ func (s *Server) Handler() http.Handler {
 	// Contexts
 	mux.HandleFunc("GET /v1/contexts", s.handleContexts)
 	mux.HandleFunc("POST /v1/contexts", s.handleCreateContext)
+	mux.HandleFunc("POST /v1/contexts/ai_mode", s.handleContextAIMode)
 
 	// Dashboards
 	mux.HandleFunc("GET /v1/today", s.handleToday)
