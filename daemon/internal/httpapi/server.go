@@ -75,9 +75,16 @@ func (s *Server) Handler() http.Handler {
 	// Voice intent (heuristic now; LLM in WS3, audio in WS4)
 	mux.HandleFunc("POST /v1/voice/intent", s.handleVoiceIntent)
 
-	// VPS (real SSH in WS5)
+	// VPS + servers
 	mux.HandleFunc("GET /v1/vps", s.handleVps)
 	mux.HandleFunc("POST /v1/vps/restart", s.handleRestart)
+	mux.HandleFunc("GET /v1/servers", s.handleServers)
+	mux.HandleFunc("POST /v1/servers", s.handleCreateServer)
+	mux.HandleFunc("DELETE /v1/servers/{id}", s.handleDeleteServer)
+
+	// LLM key management (Keychain-backed)
+	mux.HandleFunc("POST /v1/llm/key", s.handleSetLLMKey)
+	mux.HandleFunc("GET /v1/llm/key", s.handleLLMKeyStatus)
 
 	// Live events (SSE)
 	mux.HandleFunc("GET /v1/events", s.deps.Hub.ServeSSE)

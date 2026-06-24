@@ -12,8 +12,8 @@ import (
 	"aqnod/internal/store"
 )
 
-// keychainService namespaces LLM API keys in the OS keychain.
-const keychainService = "io.aqno.llm"
+// KeychainService namespaces LLM API keys in the OS keychain.
+const KeychainService = "io.aqno.llm"
 
 // Brain implements the assistant: it parses intents, executes the v1 tools
 // against the store, and falls back to (or augments with) a configured LLM.
@@ -35,7 +35,7 @@ func (b *Brain) config() Config {
 		MaxTokens:   atoi(b.st.ConfigVal("llm.max_tokens", "2000"), 2000),
 		Temperature: float32(atof(b.st.ConfigVal("llm.temperature", "0.4"), 0.4)),
 	}
-	if key, err := keychain.Get(keychainService, provider); err == nil {
+	if key, err := keychain.Get(KeychainService, provider); err == nil {
 		cfg.APIKey = key
 	}
 	return cfg
