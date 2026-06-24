@@ -46,9 +46,14 @@ refresh: ## Install/refresh all dependencies (JS + Go)
 # ----------------------------------------------------------------------------
 # Development (hot reload)
 # ----------------------------------------------------------------------------
-.PHONY: dev dev-web dev-daemon sidecar
-dev: sidecar ## Run the full desktop app with hot reload (Tauri + Vite HMR)
+.PHONY: dev dev-web dev-daemon sidecar stop
+dev: sidecar stop ## Run the full desktop app with hot reload (Tauri + Vite HMR)
 	$(PNPM) tauri dev
+
+stop: ## Stop stray dev processes and free the daemon port (8787)
+	-@lsof -ti:8787 | xargs kill 2>/dev/null || true
+	-@pkill -f "aqnod-" 2>/dev/null || true
+	@echo "✓ freed daemon port 8787"
 
 dev-web: ## Run only the SvelteKit frontend with HMR (browser, talks to :8787)
 	$(PNPM) dev
