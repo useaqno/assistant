@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sync"
 
@@ -52,12 +53,32 @@ func (s *Service) rebuild() {
 		}
 	}
 	t := NewTranscriber(Options{
+		Engine:    s.st.ConfigVal("voice.stt_engine", "whisper"),
 		ModelPath: modelPath,
 		ServerURL: os.Getenv("AQNO_WHISPER_SERVER"),
+		SpeechBin: speechBin(),
 	})
 	s.mu.Lock()
 	s.transcriber = t
 	s.mu.Unlock()
+}
+
+// speechBin locates the aqno-speech helper: explicit env, then alongside the
+// daemon executable (aqno-speech*), then PATH.
+func speechBin() string {
+	if b := os.Getenv("AQNO_SPEECH_BIN"); b != "" {
+		return b
+	}
+	if exe, err := os.Executable(); err == nil {
+		dir := filepath.Dir(exe)
+		if matches, _ := filepath.Glob(filepath.Join(dir, "aqno-speech*")); len(matches) > 0 {
+			return matches[0]
+		}
+	}
+	if p, err := exec.LookPath("aqno-speech"); err == nil {
+		return p
+	}
+	return ""
 }
 
 func (s *Service) tx() Transcriber {
@@ -65,6 +86,9 @@ func (s *Service) tx() Transcriber {
 	defer s.mu.RUnlock()
 	return s.transcriber
 }
+
+// Reload reselects the engine after a voice config change (engine/tier/etc.).
+func (s *Service) Reload() { s.rebuild() }
 
 // Models returns download/verification status per tier.
 func (s *Service) Models() []modelmanager.Status { return s.mm.AllStatus() }

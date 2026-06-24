@@ -38,7 +38,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "externalBin": ["binaries/aqnod"]
+    "externalBin": ["binaries/aqnod", "binaries/aqno-speech"]
   },
   "plugins": {}
 }

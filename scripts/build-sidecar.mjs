@@ -98,3 +98,29 @@ if (useCgo) {
 
 execSync(`go build -o "${tripled}" ${buildArgs}`, { cwd: daemonDir, stdio: 'inherit', env })
 console.log(`✓ sidecar ready → src-tauri/binaries/aqnod-${triple}${ext}`)
+
+// macOS only: build the optional Apple SpeechAnalyzer helper (aqno-speech).
+buildSpeechHelper()
+
+function buildSpeechHelper() {
+  if (process.platform !== 'darwin' || !triple.includes('apple-darwin')) return
+  const helperDir = resolve(root, 'helpers/aqno-speech')
+  if (!existsSync(helperDir)) return
+  try {
+    execSync('swift --version', { stdio: 'ignore' })
+  } catch {
+    console.log('› skipping aqno-speech (swift not found)')
+    return
+  }
+  const arch = triple.startsWith('aarch64') ? 'arm64' : 'x86_64'
+  console.log('› building aqno-speech (Apple SpeechAnalyzer helper)…')
+  try {
+    execSync(`swift build -c release --arch ${arch}`, { cwd: helperDir, stdio: 'inherit' })
+    const built = resolve(helperDir, `.build/${arch}-apple-macosx/release/aqno-speech`)
+    const fallback = resolve(helperDir, '.build/release/aqno-speech')
+    cpSync(existsSync(built) ? built : fallback, resolve(binDir, `aqno-speech-${triple}`))
+    console.log(`✓ helper ready → src-tauri/binaries/aqno-speech-${triple}`)
+  } catch (e) {
+    console.log(`› aqno-speech build failed (optional engine): ${e.message}`)
+  }
+}

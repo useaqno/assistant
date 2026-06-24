@@ -13,10 +13,14 @@ vite.config.ts.timestamp-*
 src-tauri/target
 src-tauri/gen
 src-tauri/binaries/aqnod*
+src-tauri/binaries/aqno-speech*
 
 # go
 daemon/aqnod
 daemon/aqnod.exe
+
+# swift helper (Apple SpeechAnalyzer)
+helpers/aqno-speech/.build
 
 # os
 .DS_Store

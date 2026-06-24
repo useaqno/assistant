@@ -61,11 +61,18 @@ func (s *Server) handleSetConfig(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusBadRequest, "invalid config")
 		return
 	}
+	voiceChanged := false
 	for k, v := range body {
 		if err := s.deps.Store.SetConfig(k, v); err != nil {
 			writeErr(w, http.StatusInternalServerError, err.Error())
 			return
 		}
+		if len(k) >= 6 && k[:6] == "voice." {
+			voiceChanged = true
+		}
+	}
+	if voiceChanged && s.deps.Voice != nil {
+		s.deps.Voice.Reload()
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"ok": true})
 }

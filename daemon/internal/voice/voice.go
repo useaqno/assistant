@@ -35,14 +35,27 @@ type Speaker interface {
 
 // Options configures transcriber construction.
 type Options struct {
+	Engine    string // preferred engine: "whisper" | "apple" | "auto"
 	ModelPath string // local whisper model (for the cgo engine)
 	ServerURL string // whisper.cpp server base URL (for the server engine)
+	SpeechBin string // path to the aqno-speech helper (Apple engine)
 }
 
-// NewTranscriber picks the best available engine (cgo > server > unavailable).
+// NewTranscriber picks an engine honouring the preference, then falling back:
+// apple (when chosen/available) → whisper.cpp → whisper-server → unavailable.
 func NewTranscriber(opts Options) Transcriber {
+	if opts.Engine == "apple" {
+		if t, ok := newAppleTranscriber(opts.SpeechBin); ok {
+			return t
+		}
+	}
 	if t, ok := newWhisperTranscriber(opts.ModelPath); ok {
 		return t
+	}
+	if opts.Engine == "auto" {
+		if t, ok := newAppleTranscriber(opts.SpeechBin); ok {
+			return t
+		}
 	}
 	if opts.ServerURL != "" {
 		return &serverTranscriber{base: opts.ServerURL}
