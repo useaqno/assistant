@@ -4,7 +4,6 @@
   import Button from '$components/Button.svelte'
   import Icon from '$components/Icon.svelte'
   import { api } from '$lib/api'
-  import { setVoice } from '$stores/voice'
   import { SvelteSet } from 'svelte/reactivity'
   import type { Graph, GraphNode } from '$lib/types'
 
@@ -42,13 +41,11 @@
   }
 
   onMount(async () => {
-    setVoice({
-      state: 'thinking',
-      transcript: 'Conectando proposta Q3 à decisão de tokenização da Visa…',
-      level: 0.5
-    })
     try {
       g = await api.graph()
+      if (g.nodes.length && !g.nodes.find((n) => n.id === active)) {
+        active = g.nodes[0].id
+      }
     } catch {
       /* offline */
     }
@@ -58,7 +55,7 @@
 <div class="page">
   <header class="head">
     <div>
-      <div class="overline">142 nós · 318 conexões</div>
+      <div class="overline">{g?.nodes.length ?? 0} nós · {g?.edges.length ?? 0} conexões</div>
       <h1>Rede neural</h1>
     </div>
     <div class="search">
@@ -76,8 +73,12 @@
       />
 
       <div class="filters">
-        <span class="fchip on"><span class="d" style="background:#0C0A14"></span>Cogna</span>
-        <span class="fchip glass">Todos os contextos</span>
+        {#if activeNode}
+          <span class="fchip on"
+            ><span class="d" style="background:#0C0A14"></span>{activeNode.label}</span
+          >
+        {/if}
+        <span class="fchip glass">{g?.nodes.length ?? 0} entidades</span>
       </div>
 
       {#if activeNode}
@@ -93,7 +94,7 @@
               ? 'Empresa · contexto'
               : (kindLabel[activeNode.kind] ?? activeNode.kind)}
           </div>
-          <p class="d-desc">38 memórias · 12 eventos · 5 pessoas. Última atividade há 12 min.</p>
+          <p class="d-desc">{neighbors.length} conexões diretas nesta rede.</p>
           <div class="overline">Conexões fortes</div>
           <div class="conns">
             {#each neighbors.slice(0, 4) as n (n.id)}

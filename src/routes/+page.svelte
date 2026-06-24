@@ -7,51 +7,65 @@
   import Icon from '$components/Icon.svelte'
   import { api } from '$lib/api'
   import { presence } from '$stores/presence'
-  import { setVoice } from '$stores/voice'
-  import type { TodayBrief } from '$lib/types'
+  import { app, companionName } from '$stores/app'
+  import { startListening } from '$lib/voice'
+  import type { Task, TodayBrief } from '$lib/types'
 
   let brief = $state<TodayBrief | null>(null)
 
-  onMount(async () => {
-    setVoice({
-      state: 'listening',
-      transcript: 'Íris, remarca a call da Cogna pra amanhã de manhã',
-      level: 0.85
-    })
+  const companion = $derived(companionName($app.persona))
+  const ownerInitial = $derived(($app.persona.owner || 'A').charAt(0).toUpperCase())
+  const doneCount = $derived((brief?.taskList ?? []).filter((t) => t.done).length)
+
+  async function load() {
     try {
       brief = await api.today()
     } catch {
       /* daemon offline */
     }
-  })
+  }
+
+  async function toggle(t: Task) {
+    if (!t.id) return
+    const done = !t.done
+    t.done = done
+    try {
+      await api.setTaskDone(t.id, done)
+    } catch {
+      t.done = !done
+    }
+  }
+
+  onMount(load)
 </script>
 
 <div class="scroll">
   <header class="head">
     <div>
       <div class="overline" style="color:var(--purple-glow)">
-        {brief?.date ?? 'Segunda · 23 jun · 09:12'}
+        {brief?.date ?? ''}
       </div>
-      <h1>{brief?.greeting ?? 'Bom dia, Renato.'}</h1>
+      <h1>{brief?.greeting ?? `Olá, ${$app.persona.owner || ''}`}</h1>
     </div>
     <div class="head-right">
       <div class="search"><Icon name="search" size={15} /> Buscar <kbd>⌘K</kbd></div>
-      <div class="avatar">R</div>
+      <div class="avatar">{ownerInitial}</div>
     </div>
   </header>
 
   <section class="hero">
     <Presence state={$presence.state} size={150} level={$presence.level} />
     <div class="hero-name">
-      <span class="n">Íris</span>
+      <span class="n">{companion}</span>
       <span class="tag">Pronto</span>
     </div>
     <p class="hero-line">
-      Você tem <b>{brief?.meetings ?? 4} reuniões</b> e <b>{brief?.tasks ?? 3} tarefas</b> hoje. Quer
-      que eu prepare um resumo?
+      {brief?.headline ?? `Olá! Sou ${companion}, sua companheira. Quer que eu prepare seu dia?`}
     </p>
     <div class="cta-row">
-      <button class="cta"><Icon name="mic" size={20} /> Falar com a Íris</button>
+      <button class="cta" onclick={() => startListening()}>
+        <Icon name="mic" size={20} /> Falar com {companion}
+      </button>
       <span class="hint">ou segure <kbd>espaço</kbd></span>
     </div>
   </section>
@@ -59,25 +73,28 @@
   <section class="cards">
     <Card padding={18}>
       <div class="c-head">
-        <span class="overline">Próximo evento</span><span class="warn">em 18 min</span>
+        <span class="overline">Próximo evento</span>
       </div>
-      <div class="c-title">{brief?.nextEvent.title ?? 'Daily da Cogna'}</div>
+      <div class="c-title">{brief?.nextEvent.title ?? '—'}</div>
       <div class="c-sub mono">
-        {brief?.nextEvent.start ?? '09:30'} — {brief?.nextEvent.end ?? '10:00'}
+        {brief?.nextEvent.start ?? '--:--'} — {brief?.nextEvent.end ?? '--:--'}
       </div>
-      <ContextChip
-        label={brief?.nextEvent.context ?? 'Cogna'}
-        color={brief?.nextEvent.color ?? 'violet'}
-        size="sm"
-      />
+      {#if brief?.nextEvent.context}
+        <ContextChip
+          label={brief.nextEvent.context}
+          color={brief.nextEvent.color || 'violet'}
+          size="sm"
+        />
+      {/if}
     </Card>
 
     <Card padding={18}>
       <div class="c-head">
-        <span class="overline">Tarefas de hoje</span><span class="mono mut">2 / 5</span>
+        <span class="overline">Tarefas de hoje</span>
+        <span class="mono mut">{doneCount} / {brief?.taskList?.length ?? 0}</span>
       </div>
-      {#each brief?.taskList ?? [{ title: 'Enviar proposta Q3', done: true }, { title: 'Revisar dossiê Bayer', done: false }, { title: 'Ligar pro contador', done: false }] as t (t.title)}
-        <div class="task">
+      {#each brief?.taskList ?? [] as t (t.id ?? t.title)}
+        <button class="task" onclick={() => toggle(t)}>
           <span class="box" class:done={t.done}>
             {#if t.done}<Icon
                 name="check"
@@ -87,8 +104,11 @@
               />{/if}
           </span>
           <span class="t-label" class:done={t.done}>{t.title}</span>
-        </div>
+        </button>
       {/each}
+      {#if (brief?.taskList?.length ?? 0) === 0}
+        <span class="empty">Nenhuma tarefa por enquanto.</span>
+      {/if}
     </Card>
 
     <Card padding={18} glow>
@@ -225,10 +245,6 @@
     margin-top: 8px;
     max-width: 440px;
   }
-  .hero-line b {
-    color: var(--text-1);
-    font-weight: 600;
-  }
   .cta-row {
     display: flex;
     align-items: center;
@@ -269,11 +285,6 @@
     justify-content: space-between;
     margin-bottom: 10px;
   }
-  .warn {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--warning);
-  }
   .mut {
     color: var(--text-2);
   }
@@ -292,6 +303,16 @@
     align-items: center;
     gap: 9px;
     margin-bottom: 7px;
+    width: 100%;
+    padding: 2px 0;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+  }
+  .empty {
+    font-size: 13px;
+    color: var(--text-3);
   }
   .box {
     width: 15px;

@@ -5,13 +5,11 @@
   import Button from '$components/Button.svelte'
   import Icon from '$components/Icon.svelte'
   import { api } from '$lib/api'
-  import { setVoice } from '$stores/voice'
   import type { Vps } from '$lib/types'
 
   let v = $state<Vps | null>(null)
-  // The worker is flagged unstable — show the explicit restart confirmation by
-  // default, matching the "voice command awaiting confirmation" moment.
-  let confirmTarget = $state<string | null>('worker-fila')
+  let confirmTarget = $state<string | null>(null)
+  let toast = $state('')
 
   const levelColor: Record<string, string> = {
     INFO: 'var(--info)',
@@ -29,21 +27,24 @@
     const name = confirmTarget
     try {
       const r = await api.restart(name, true)
-      setVoice({ state: 'confirming', transcript: r.message, level: 0.6 })
+      toast = r.message
     } catch {
-      setVoice({ state: 'confirming', transcript: `Container reiniciado · ${name}`, level: 0.6 })
+      toast = `Falha ao reiniciar ${name}`
     }
     confirmTarget = null
+    setTimeout(() => (toast = ''), 4000)
+    load()
   }
 
-  onMount(async () => {
-    setVoice({ state: 'listening', transcript: 'Íris, reinicia o worker da fila', level: 0.6 })
+  async function load() {
     try {
       v = await api.vps()
     } catch {
       /* offline */
     }
-  })
+  }
+
+  onMount(load)
 
   const gauges = $derived([
     {
@@ -80,6 +81,10 @@
       >
     </div>
   </header>
+
+  {#if toast}
+    <div class="toast">{toast}</div>
+  {/if}
 
   <div class="body">
     <div class="gauges">
@@ -260,6 +265,15 @@
   }
   .chip.ok .d.glow {
     box-shadow: 0 0 8px var(--success);
+  }
+  .toast {
+    margin: 12px 36px 0;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    background: var(--success-bg);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    color: var(--success);
+    font-size: 13.5px;
   }
   .body {
     flex: 1;

@@ -14,6 +14,44 @@ export interface Context {
   id: string
   label: string
   color: ContextColor
+  aiMode?: 'cloud' | 'local_only'
+  archived?: boolean
+}
+
+export interface Persona {
+  name: string
+  owner: string
+  avatar: string
+  avatarRef?: string
+  auraColor: string
+  voice?: string
+  tone: string
+  wakeWord: string
+}
+
+export type Config = Record<string, string>
+
+export interface Bootstrap {
+  persona: Persona
+  contexts: Context[]
+  onboarded: boolean
+  config: Config
+}
+
+export interface Server {
+  id: string
+  name: string
+  host: string
+  port: number
+  user: string
+  authType: 'senha' | 'chave'
+  keychainRef?: string
+}
+
+export interface Conversation {
+  id: string
+  title: string
+  latest?: string
 }
 
 export interface Interaction {
@@ -26,12 +64,19 @@ export interface Interaction {
 }
 
 export interface Task {
+  id?: string
   title: string
   done: boolean
+  status?: 'aberta' | 'em_andamento' | 'concluida'
+  contextId?: string
+  context?: string
+  priority?: number
+  deadline?: string
 }
 
 export interface Event {
   id?: string
+  contextId?: string
   title: string
   context: string
   color: ContextColor
@@ -41,6 +86,10 @@ export interface Event {
   endMin?: number
   kind?: 'event' | 'focus' | 'personal'
   conflict?: boolean
+  rrule?: string
+  date?: string
+  reminderMin?: number
+  originVoice?: string
 }
 
 export interface TodayBrief {

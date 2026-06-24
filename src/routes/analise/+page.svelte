@@ -7,7 +7,6 @@
   import Button from '$components/Button.svelte'
   import Icon from '$components/Icon.svelte'
   import { api } from '$lib/api'
-  import { setVoice } from '$stores/voice'
   import type { Analysis, AppHealth } from '$lib/types'
 
   let a = $state<Analysis | null>(null)
@@ -34,11 +33,6 @@
   }
 
   onMount(async () => {
-    setVoice({
-      state: 'speaking',
-      transcript: 'Resumo do dia: 4 reuniões, manhã protegida e a proposta da Visa priorizada.',
-      level: 0.7
-    })
     try {
       a = await api.analysis()
     } catch {

@@ -3,37 +3,30 @@
   import '@fontsource-variable/jetbrains-mono'
   import '../app.css'
   import { onMount } from 'svelte'
+  import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
   import Sidebar from '$components/Sidebar.svelte'
   import VoiceBar from '$components/VoiceBar.svelte'
-  import { api } from '$lib/api'
   import { presence } from '$stores/presence'
+  import { app } from '$stores/app'
   import { onDaemonReady } from '$lib/tauri'
-  import type { Context } from '$lib/types'
 
   const { children } = $props()
 
-  // Static fallback so the shell paints instantly even before the daemon answers.
-  let contexts = $state<Context[]>([
-    { id: 'cogna', label: 'Cogna', color: 'violet' },
-    { id: 'bayer', label: 'Bayer', color: 'teal' },
-    { id: 'visa', label: 'Visa', color: 'amber' },
-    { id: 'devlith', label: 'Devlith', color: 'rose' },
-    { id: 'pitrace', label: 'Pitrace', color: 'blue' }
-  ])
+  const path = $derived($page.url.pathname)
+  const bare = $derived(path === '/onboarding')
 
-  async function loadContexts() {
-    try {
-      contexts = await api.contexts()
-    } catch {
-      /* keep fallback */
+  async function hydrate() {
+    const onboarded = await app.load()
+    if (!onboarded && path !== '/onboarding') {
+      goto('/onboarding')
     }
   }
 
   onMount(() => {
     presence.connect()
-    loadContexts()
-    // Re-fetch once the sidecar announces it is live (Tauri).
-    const off = onDaemonReady(() => loadContexts())
+    hydrate()
+    const off = onDaemonReady(() => hydrate())
     return () => {
       presence.disconnect()
       off.then((fn) => fn())
@@ -41,15 +34,19 @@
   })
 </script>
 
-<div class="shell">
-  <Sidebar {contexts} />
-  <main class="content">
-    {@render children?.()}
-    <div class="voice-dock">
-      <VoiceBar />
-    </div>
-  </main>
-</div>
+{#if bare}
+  {@render children?.()}
+{:else}
+  <div class="shell">
+    <Sidebar contexts={$app.contexts} />
+    <main class="content">
+      {@render children?.()}
+      <div class="voice-dock">
+        <VoiceBar />
+      </div>
+    </main>
+  </div>
+{/if}
 
 <style>
   .shell {
