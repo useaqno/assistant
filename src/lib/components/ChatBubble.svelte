@@ -1,21 +1,21 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+  import type { Snippet } from 'svelte'
 
-  let {
+  const {
     from = 'aqno',
     name = '',
     time = '',
     streaming = false,
     children
   }: {
-    from?: 'user' | 'aqno';
-    name?: string;
-    time?: string;
-    streaming?: boolean;
-    children?: Snippet;
-  } = $props();
+    from?: 'user' | 'aqno'
+    name?: string
+    time?: string
+    streaming?: boolean
+    children?: Snippet
+  } = $props()
 
-  let isUser = $derived(from === 'user');
+  const isUser = $derived(from === 'user')
 </script>
 
 <div class="row" class:user={isUser}>
@@ -26,7 +26,7 @@
     {@render children?.()}
     {#if streaming}
       <span class="typing">
-        {#each [0, 1, 2] as i}<span style="animation-delay:{i * 180}ms"></span>{/each}
+        {#each [0, 1, 2] as i (i)}<span style="animation-delay:{i * 180}ms"></span>{/each}
       </span>
     {/if}
   </div>
@@ -42,7 +42,10 @@
     max-width: 78%;
     align-self: flex-start;
   }
-  .row.user { align-items: flex-end; align-self: flex-end; }
+  .row.user {
+    align-items: flex-end;
+    align-self: flex-end;
+  }
   .who {
     display: flex;
     align-items: center;
@@ -78,7 +81,9 @@
     background: var(--grad-active);
     color: var(--text-on-purple);
     border: 1px solid transparent;
-    box-shadow: var(--glow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    box-shadow:
+      var(--glow-sm),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
   }
   .time {
     font-family: var(--font-mono);
@@ -86,7 +91,12 @@
     color: var(--text-3);
     padding: 0 4px;
   }
-  .typing { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: middle; }
+  .typing {
+    display: inline-flex;
+    gap: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
   .typing span {
     width: 5px;
     height: 5px;

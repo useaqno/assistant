@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
-  import Icon from './Icon.svelte';
+  import type { Snippet } from 'svelte'
+  import Icon from './Icon.svelte'
 
-  let {
+  const {
     variant = 'primary',
     size = 'md',
     icon = '',
@@ -12,21 +12,21 @@
     onclick,
     children
   }: {
-    variant?: 'primary' | 'ghost' | 'subtle' | 'danger';
-    size?: 'sm' | 'md' | 'lg';
-    icon?: string;
-    iconRight?: string;
-    full?: boolean;
-    disabled?: boolean;
-    onclick?: () => void;
-    children?: Snippet;
-  } = $props();
+    variant?: 'primary' | 'ghost' | 'subtle' | 'danger'
+    size?: 'sm' | 'md' | 'lg'
+    icon?: string
+    iconRight?: string
+    full?: boolean
+    disabled?: boolean
+    onclick?: () => void
+    children?: Snippet
+  } = $props()
 
   const dims = {
     sm: { h: 32, px: 12, fs: 13, gap: 6 },
     md: { h: 40, px: 16, fs: 15, gap: 8 },
     lg: { h: 48, px: 22, fs: 16, gap: 10 }
-  }[size];
+  }[size]
 </script>
 
 <button
@@ -56,36 +56,53 @@
     user-select: none;
     transition: var(--transition-base);
   }
-  .btn.full { width: 100%; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn:active:not(:disabled) { transform: scale(0.97); }
+  .btn.full {
+    width: 100%;
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
 
   .primary {
     background: var(--grad-active);
     color: var(--text-on-purple);
-    box-shadow: var(--glow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    box-shadow:
+      var(--glow-sm),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22);
   }
   .primary:hover:not(:disabled) {
     filter: brightness(1.08);
-    box-shadow: var(--glow-md), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    box-shadow:
+      var(--glow-md),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
   }
   .ghost {
     background: transparent;
     color: var(--text-1);
     border-color: var(--border-strong);
   }
-  .ghost:hover:not(:disabled) { border-color: var(--purple-glow); }
+  .ghost:hover:not(:disabled) {
+    border-color: var(--purple-glow);
+  }
   .subtle {
     background: var(--surface-3);
     color: var(--text-1);
     border-color: var(--border-subtle);
     box-shadow: inset 0 1px 0 var(--highlight-top);
   }
-  .subtle:hover:not(:disabled) { background: #2c2640; }
+  .subtle:hover:not(:disabled) {
+    background: #2c2640;
+  }
   .danger {
     background: var(--danger-bg);
     color: var(--danger);
     border-color: rgba(248, 113, 113, 0.3);
   }
-  .danger:hover:not(:disabled) { background: rgba(248, 113, 113, 0.18); }
+  .danger:hover:not(:disabled) {
+    background: rgba(248, 113, 113, 0.18);
+  }
 </style>

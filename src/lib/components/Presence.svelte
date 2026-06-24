@@ -2,14 +2,14 @@
   // Presence — Aqno's living aura. A violet orb that breathes and reacts to
   // voice. Six states: idle · listening · transcribing · thinking · speaking ·
   // confirming. Honours prefers-reduced-motion via the global keyframes.
-  import type { PresenceState } from '$lib/types';
+  import type { PresenceState } from '$lib/types'
 
-  let {
+  const {
     state = 'idle',
     size = 96,
     level = 0.6,
     label = ''
-  }: { state?: PresenceState; size?: number; level?: number; label?: string } = $props();
+  }: { state?: PresenceState; size?: number; level?: number; label?: string } = $props()
 
   const coreAnim: Record<PresenceState, string> = {
     idle: 'aqno-breathe var(--dur-breath) var(--ease-organic) infinite',
@@ -18,7 +18,7 @@
     thinking: 'aqno-shimmer var(--dur-shimmer) ease-in-out infinite',
     speaking: 'aqno-breathe 1800ms var(--ease-organic) infinite',
     confirming: 'none'
-  };
+  }
   const auraOpacity: Record<PresenceState, number> = {
     idle: 0.5,
     listening: 0.85,
@@ -26,10 +26,10 @@
     thinking: 0.7,
     speaking: 0.95,
     confirming: 0.8
-  };
+  }
 
-  let isConfirm = $derived(state === 'confirming');
-  let bars = $derived([0.45, 0.8, 1, 0.7, 0.35, 0.6, 0.9]);
+  const isConfirm = $derived(state === 'confirming')
+  const bars = $derived([0.45, 0.8, 1, 0.7, 0.35, 0.6, 0.9])
 </script>
 
 <div class="presence" style="--sz:{size}px">
@@ -47,7 +47,7 @@
 
     <!-- listening ripples -->
     {#if state === 'listening'}
-      {#each [0, 1, 2] as i}
+      {#each [0, 1, 2] as i (i)}
         <div class="ripple" style="animation-delay:{i * 800}ms"></div>
       {/each}
     {/if}
@@ -61,8 +61,7 @@
         ? 'radial-gradient(circle at 50% 42%, #86EFAC 0%, #4ADE80 45%, #16A34A 100%)'
         : 'var(--grad-presence)'};
         box-shadow: var(--glow-presence), inset 0 {size * 0.06}px {size *
-        0.12}px rgba(255,255,255,0.35), inset 0 {-size * 0.08}px {size *
-        0.16}px rgba(20,8,40,0.5);"
+        0.12}px rgba(255,255,255,0.35), inset 0 {-size * 0.08}px {size * 0.16}px rgba(20,8,40,0.5);"
     >
       <div class="spec"></div>
 
@@ -72,7 +71,7 @@
 
       {#if state === 'speaking'}
         <div class="wave" style="gap:{size * 0.04}px">
-          {#each bars as b, i}
+          {#each bars as b, i (i)}
             <span
               style="
                 width:{Math.max(2, size * 0.035)}px;
@@ -102,7 +101,8 @@
   </div>
 
   {#if label}
-    <span class="label" style="color:{isConfirm ? 'var(--success)' : 'var(--text-2)'}">{label}</span>
+    <span class="label" style="color:{isConfirm ? 'var(--success)' : 'var(--text-2)'}">{label}</span
+    >
   {/if}
 </div>
 

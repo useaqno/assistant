@@ -55,8 +55,17 @@
   --focus-ring: var(--purple-glow);
 
   /* --- Presence gradients --- */
-  --grad-presence: radial-gradient(circle at 50% 42%, var(--purple-glow-2) 0%, var(--purple) 42%, var(--purple-deep) 100%);
-  --grad-aura: radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.55) 0%, rgba(139, 92, 246, 0) 70%);
+  --grad-presence: radial-gradient(
+    circle at 50% 42%,
+    var(--purple-glow-2) 0%,
+    var(--purple) 42%,
+    var(--purple-deep) 100%
+  );
+  --grad-aura: radial-gradient(
+    circle at 50% 50%,
+    rgba(167, 139, 250, 0.55) 0%,
+    rgba(139, 92, 246, 0) 70%
+  );
   --grad-active: linear-gradient(135deg, var(--purple) 0%, var(--purple-deep) 100%);
 
   /* --- Type --- */
@@ -113,28 +122,60 @@
 
 /* --- Presence keyframes (shared by the Presence component) --- */
 @keyframes aqno-breathe {
-  0%, 100% { transform: scale(1); opacity: 0.92; }
-  50% { transform: scale(1.06); opacity: 1; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
 }
 @keyframes aqno-ripple {
-  0% { transform: scale(0.9); opacity: 0.55; }
-  100% { transform: scale(1.8); opacity: 0; }
+  0% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
 }
 @keyframes aqno-shimmer {
-  0%, 100% { opacity: 0.5; filter: brightness(0.9); }
-  50% { opacity: 1; filter: brightness(1.25); }
+  0%,
+  100% {
+    opacity: 0.5;
+    filter: brightness(0.9);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.25);
+  }
 }
 @keyframes aqno-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes aqno-wave {
-  0%, 100% { transform: scaleY(0.35); }
-  50% { transform: scaleY(1); }
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :root { --dur-breath: 0ms; --dur-shimmer: 0ms; }
-  *, *::before, *::after {
+  :root {
+    --dur-breath: 0ms;
+    --dur-shimmer: 0ms;
+  }
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;

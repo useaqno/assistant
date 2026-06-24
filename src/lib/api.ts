@@ -1,24 +1,24 @@
 // Typed REST client for the aqnod daemon.
 
-import { getDaemonUrl } from './tauri';
-import type { Agenda, Analysis, ChatMessage, Context, Graph, TodayBrief, Vps } from './types';
+import { getDaemonUrl } from './tauri'
+import type { Agenda, Analysis, ChatMessage, Context, Graph, TodayBrief, Vps } from './types'
 
 async function get<T>(path: string): Promise<T> {
-  const base = await getDaemonUrl();
-  const res = await fetch(`${base}${path}`);
-  if (!res.ok) throw new Error(`aqnod ${path} → ${res.status}`);
-  return (await res.json()) as T;
+  const base = await getDaemonUrl()
+  const res = await fetch(`${base}${path}`)
+  if (!res.ok) throw new Error(`aqnod ${path} → ${res.status}`)
+  return (await res.json()) as T
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
-  const base = await getDaemonUrl();
+  const base = await getDaemonUrl()
   const res = await fetch(`${base}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error(`aqnod ${path} → ${res.status}`);
-  return (await res.json()) as T;
+  })
+  if (!res.ok) throw new Error(`aqnod ${path} → ${res.status}`)
+  return (await res.json()) as T
 }
 
 export const api = {
@@ -36,4 +36,4 @@ export const api = {
       container,
       confirm
     })
-};
+}

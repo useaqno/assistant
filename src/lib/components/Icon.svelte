@@ -1,12 +1,12 @@
 <script lang="ts">
   // Thin 2px line icons (Lucide-compatible geometry), inlined so the app has no
   // external icon dependency.
-  let {
+  const {
     name,
     size = 20,
     stroke = 'currentColor',
     strokeWidth = 2
-  }: { name: string; size?: number; stroke?: string; strokeWidth?: number } = $props();
+  }: { name: string; size?: number; stroke?: string; strokeWidth?: number } = $props()
 
   const paths: Record<string, string> = {
     home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/>',
@@ -30,13 +30,15 @@
     arrowUp: '<path d="M12 19V5M5 12l7-7 7 7"/>',
     check: '<path d="M20 6 9 17l-5-5"/>',
     refresh: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
-    alert: '<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>',
-    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>',
+    alert:
+      '<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>',
+    users:
+      '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>',
     file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
     chevronLeft: '<path d="M15 18l-6-6 6-6"/>',
     chevronRight: '<path d="M9 18l6-6-6-6"/>',
     expand: '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>'
-  };
+  }
 </script>
 
 <svg
@@ -49,5 +51,6 @@
   stroke-linecap="round"
   stroke-linejoin="round"
 >
+  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
   {@html paths[name] ?? ''}
 </svg>

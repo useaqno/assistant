@@ -1,16 +1,16 @@
 <script lang="ts">
-  import '@fontsource-variable/inter';
-  import '@fontsource-variable/jetbrains-mono';
-  import '../app.css';
-  import { onMount } from 'svelte';
-  import Sidebar from '$components/Sidebar.svelte';
-  import VoiceBar from '$components/VoiceBar.svelte';
-  import { api } from '$lib/api';
-  import { presence } from '$stores/presence';
-  import { onDaemonReady } from '$lib/tauri';
-  import type { Context } from '$lib/types';
+  import '@fontsource-variable/inter'
+  import '@fontsource-variable/jetbrains-mono'
+  import '../app.css'
+  import { onMount } from 'svelte'
+  import Sidebar from '$components/Sidebar.svelte'
+  import VoiceBar from '$components/VoiceBar.svelte'
+  import { api } from '$lib/api'
+  import { presence } from '$stores/presence'
+  import { onDaemonReady } from '$lib/tauri'
+  import type { Context } from '$lib/types'
 
-  let { children } = $props();
+  const { children } = $props()
 
   // Static fallback so the shell paints instantly even before the daemon answers.
   let contexts = $state<Context[]>([
@@ -19,26 +19,26 @@
     { id: 'visa', label: 'Visa', color: 'amber' },
     { id: 'devlith', label: 'Devlith', color: 'rose' },
     { id: 'pitrace', label: 'Pitrace', color: 'blue' }
-  ]);
+  ])
 
   async function loadContexts() {
     try {
-      contexts = await api.contexts();
+      contexts = await api.contexts()
     } catch {
       /* keep fallback */
     }
   }
 
   onMount(() => {
-    presence.connect();
-    loadContexts();
+    presence.connect()
+    loadContexts()
     // Re-fetch once the sidecar announces it is live (Tauri).
-    const off = onDaemonReady(() => loadContexts());
+    const off = onDaemonReady(() => loadContexts())
     return () => {
-      presence.disconnect();
-      off.then((fn) => fn());
-    };
-  });
+      presence.disconnect()
+      off.then((fn) => fn())
+    }
+  })
 </script>
 
 <div class="shell">

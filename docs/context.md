@@ -208,7 +208,7 @@ Persistida na tabela `config`; a **chave de API vai para o Keychain**, nunca par
   // Fallback / modo privado
   "llm.local_provider": "ollama",
   "llm.local_model": "<modelo-local>",
-  "llm.embeddings_model": "<modelo-de-embeddings>",
+  "llm.embeddings_model": "<modelo-de-embeddings>"
 }
 ```
 
@@ -223,7 +223,7 @@ Cada contexto (empresa) pode forçar um modo de IA. Isso garante que dados sens�
   "context.Visa.ai_mode": "local_only", // só Ollama, nada para a nuvem
   "context.Bayer.ai_mode": "local_only",
   "context.Pessoal.ai_mode": "cloud",
-  "context.Pitrace.ai_mode": "cloud",
+  "context.Pitrace.ai_mode": "cloud"
 }
 ```
 

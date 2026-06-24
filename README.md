@@ -33,16 +33,16 @@ that turns the Aqno screens into a real desktop app.
 
 ## Screens → data
 
-| Screen          | Route       | Daemon endpoint        |
-| --------------- | ----------- | ---------------------- |
-| Início          | `/`         | `GET /v1/today`        |
-| Criar persona   | `/persona`  | _(local state)_        |
-| Agenda          | `/agenda`   | `GET /v1/agenda`       |
-| Briefing diário | `/analise`  | `GET /v1/analysis`     |
-| VPS / Infra     | `/vps`      | `GET /v1/vps` · `POST /v1/vps/restart` |
-| Chat            | `/chat`     | `GET/POST /v1/chat`    |
-| Rede neural     | `/rede`     | `GET /v1/graph`        |
-| Shell (sidebar) | _all_       | `GET /v1/contexts` · `SSE /v1/events` |
+| Screen          | Route      | Daemon endpoint                        |
+| --------------- | ---------- | -------------------------------------- |
+| Início          | `/`        | `GET /v1/today`                        |
+| Criar persona   | `/persona` | _(local state)_                        |
+| Agenda          | `/agenda`  | `GET /v1/agenda`                       |
+| Briefing diário | `/analise` | `GET /v1/analysis`                     |
+| VPS / Infra     | `/vps`     | `GET /v1/vps` · `POST /v1/vps/restart` |
+| Chat            | `/chat`    | `GET/POST /v1/chat`                    |
+| Rede neural     | `/rede`    | `GET /v1/graph`                        |
+| Shell (sidebar) | _all_      | `GET /v1/contexts` · `SSE /v1/events`  |
 
 ## Prerequisites
 
