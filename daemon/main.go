@@ -21,6 +21,7 @@ import (
 	"aqnod/internal/llm"
 	"aqnod/internal/sshvps"
 	"aqnod/internal/store"
+	"aqnod/internal/voice"
 )
 
 func main() {
@@ -47,7 +48,8 @@ func main() {
 	hub := httpapi.NewHub()
 	brain := llm.NewBrain(st)
 	vps := sshvps.New(st)
-	api := httpapi.New(httpapi.Deps{Store: st, Hub: hub, Brain: brain, Vps: vps})
+	voiceSvc := voice.NewService(st)
+	api := httpapi.New(httpapi.Deps{Store: st, Hub: hub, Brain: brain, Vps: vps, Voice: voiceSvc})
 
 	addr := fmt.Sprintf("127.0.0.1:%d", *port)
 	srv := &http.Server{Addr: addr, Handler: api.Handler()}

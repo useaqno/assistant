@@ -9,14 +9,16 @@ import (
 	"time"
 
 	"aqnod/internal/store"
+	"aqnod/internal/voice"
 )
 
 // Deps are the services the API needs. Voice/LLM/SSH are attached as they land.
 type Deps struct {
 	Store *store.Store
-	Hub   *Hub   // SSE/event broadcaster
-	Brain Brain  // LLM assistant (nil -> canned fallback)
-	Vps   VpsProvider // SSH/metrics provider (nil -> stub fixture)
+	Hub   *Hub           // SSE/event broadcaster
+	Brain Brain          // LLM assistant (nil -> canned fallback)
+	Vps   VpsProvider    // SSH/metrics provider (nil -> stub fixture)
+	Voice *voice.Service // speech pipeline (nil -> voice disabled)
 }
 
 // Server holds dependencies and builds the router.
@@ -73,8 +75,13 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("POST /v1/chat", s.handleChatSend)
 	mux.HandleFunc("GET /v1/chat/stream", s.handleChatStream)
 
-	// Voice intent (heuristic now; LLM in WS3, audio in WS4)
+	// Voice
 	mux.HandleFunc("POST /v1/voice/intent", s.handleVoiceIntent)
+	mux.HandleFunc("GET /v1/voice/models", s.handleVoiceModels)
+	mux.HandleFunc("POST /v1/voice/models/{tier}", s.handleDownloadModel)
+	mux.HandleFunc("POST /v1/voice/speak", s.handleSpeak)
+	mux.HandleFunc("POST /v1/voice/transcribe", s.handleTranscribe)
+	mux.HandleFunc("GET /v1/voice/stream", s.handleVoiceStream)
 
 	// VPS + servers
 	mux.HandleFunc("GET /v1/vps", s.handleVps)

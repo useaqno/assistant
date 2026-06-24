@@ -3,6 +3,8 @@ module aqnod
 go 1.25.0
 
 require (
+	github.com/coder/websocket v1.8.15
+	github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20260623071231-43d78af5be58
 	golang.org/x/crypto v0.53.0
 	modernc.org/sqlite v1.53.0
 )
