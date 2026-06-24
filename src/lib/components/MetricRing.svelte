@@ -1,5 +1,5 @@
 <script lang="ts">
-  let {
+  const {
     value = 0,
     size = 96,
     thickness = 8,
@@ -8,24 +8,31 @@
     caption = '',
     glow = true
   }: {
-    value?: number;
-    size?: number;
-    thickness?: number;
-    color?: string;
-    label?: string;
-    caption?: string;
-    glow?: boolean;
-  } = $props();
+    value?: number
+    size?: number
+    thickness?: number
+    color?: string
+    label?: string
+    caption?: string
+    glow?: boolean
+  } = $props()
 
-  let r = $derived((size - thickness) / 2);
-  let circ = $derived(2 * Math.PI * r);
-  let pct = $derived(Math.max(0, Math.min(1, value)));
-  let dash = $derived(circ * pct);
+  const r = $derived((size - thickness) / 2)
+  const circ = $derived(2 * Math.PI * r)
+  const pct = $derived(Math.max(0, Math.min(1, value)))
+  const dash = $derived(circ * pct)
 </script>
 
 <div class="ring" style="width:{size}px;height:{size}px">
   <svg width={size} height={size} style="transform:rotate(-90deg)">
-    <circle cx={size / 2} cy={size / 2} {r} fill="none" stroke="var(--surface-3)" stroke-width={thickness} />
+    <circle
+      cx={size / 2}
+      cy={size / 2}
+      {r}
+      fill="none"
+      stroke="var(--surface-3)"
+      stroke-width={thickness}
+    />
     <circle
       cx={size / 2}
       cy={size / 2}
@@ -58,9 +65,20 @@
 </div>
 
 <style>
-  .ring { position: relative; display: inline-grid; place-items: center; }
-  .glow { position: absolute; opacity: 0.5; filter: blur(4px); }
-  .center { position: absolute; text-align: center; }
+  .ring {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+  }
+  .glow {
+    position: absolute;
+    opacity: 0.5;
+    filter: blur(4px);
+  }
+  .center {
+    position: absolute;
+    text-align: center;
+  }
   .val {
     font-family: var(--font-mono);
     font-weight: var(--weight-semibold);
@@ -69,5 +87,9 @@
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
-  .cap { font-family: var(--font-ui); color: var(--text-3); margin-top: 4px; }
+  .cap {
+    font-family: var(--font-ui);
+    color: var(--text-3);
+    margin-top: 4px;
+  }
 </style>

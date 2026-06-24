@@ -1,9 +1,14 @@
 /* Global entry: tokens + base resets. (Fonts are imported from +layout.svelte.) */
 @import './lib/styles/tokens.css';
 
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-html, body {
+html,
+body {
   margin: 0;
   height: 100%;
 }
@@ -19,7 +24,10 @@ body {
   overflow: hidden; /* the desktop shell owns the chrome; views scroll internally */
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: var(--font-display);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-tight);
@@ -28,11 +36,22 @@ h1, h2, h3, h4 {
   line-height: var(--leading-tight);
 }
 
-p { margin: 0; color: var(--text-2); }
-a { color: var(--purple-glow); text-decoration: none; }
-button { font-family: inherit; }
+p {
+  margin: 0;
+  color: var(--text-2);
+}
+a {
+  color: var(--purple-glow);
+  text-decoration: none;
+}
+button {
+  font-family: inherit;
+}
 
-::selection { background: var(--purple-024); color: var(--text-1); }
+::selection {
+  background: var(--purple-024);
+  color: var(--text-1);
+}
 
 :focus-visible {
   outline: none;
@@ -41,8 +60,14 @@ button { font-family: inherit; }
 }
 
 /* Scrollbars in the violet-dark idiom */
-* { scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
-*::-webkit-scrollbar { width: 10px; height: 10px; }
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
 *::-webkit-scrollbar-thumb {
   background: var(--surface-3);
   border-radius: var(--radius-pill);
@@ -50,7 +75,10 @@ button { font-family: inherit; }
   background-clip: content-box;
 }
 
-.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
 .overline {
   font-family: var(--font-mono);
   font-size: 10px;

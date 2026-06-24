@@ -6,24 +6,24 @@
     full = false,
     onchange
   }: {
-    options: string[];
-    value?: string;
-    size?: 'sm' | 'md';
-    full?: boolean;
-    onchange?: (v: string) => void;
-  } = $props();
+    options: string[]
+    value?: string
+    size?: 'sm' | 'md'
+    full?: boolean
+    onchange?: (v: string) => void
+  } = $props()
 
   // default to first option
   $effect(() => {
-    if (value === undefined && options.length) value = options[0];
-  });
+    if (value === undefined && options.length) value = options[0]
+  })
 
-  let idx = $derived(Math.max(0, options.indexOf(value ?? options[0])));
-  const dims = { sm: { h: 32, fs: 13 }, md: { h: 38, fs: 14 } }[size];
+  const idx = $derived(Math.max(0, options.indexOf(value ?? options[0])))
+  const dims = { sm: { h: 32, fs: 13 }, md: { h: 38, fs: 14 } }[size]
 
   function select(v: string) {
-    value = v;
-    onchange?.(v);
+    value = v
+    onchange?.(v)
   }
 </script>
 
@@ -34,9 +34,10 @@
 >
   <div
     class="thumb"
-    style="left:calc({(idx / options.length) * 100}% + 3px);width:calc({100 / options.length}% - 6px)"
+    style="left:calc({(idx / options.length) * 100}% + 3px);width:calc({100 /
+      options.length}% - 6px)"
   ></div>
-  {#each options as o}
+  {#each options as o (o)}
     <button
       class="opt"
       class:on={o === value}
@@ -56,7 +57,10 @@
     border-radius: var(--radius-pill);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
   }
-  .seg.full { display: grid; width: 100%; }
+  .seg.full {
+    display: grid;
+    width: 100%;
+  }
   .thumb {
     position: absolute;
     top: 3px;
@@ -64,7 +68,9 @@
     background: var(--surface-3);
     border-radius: var(--radius-pill);
     border: 1px solid var(--purple-024);
-    box-shadow: inset 0 1px 0 var(--highlight-top), 0 1px 3px rgba(0, 0, 0, 0.3);
+    box-shadow:
+      inset 0 1px 0 var(--highlight-top),
+      0 1px 3px rgba(0, 0, 0, 0.3);
     transition: left var(--dur-base) var(--ease-out);
   }
   .opt {
@@ -80,5 +86,7 @@
     color: var(--text-3);
     transition: color var(--dur-base) var(--ease-out);
   }
-  .opt.on { color: var(--text-1); }
+  .opt.on {
+    color: var(--text-1);
+  }
 </style>

@@ -1,19 +1,19 @@
 <script lang="ts">
-  import type { ContextColor } from '$lib/types';
+  import type { ContextColor } from '$lib/types'
 
-  let {
+  const {
     label,
     color = 'violet',
     active = false,
     size = 'md',
     onclick
   }: {
-    label: string;
-    color?: ContextColor;
-    active?: boolean;
-    size?: 'sm' | 'md';
-    onclick?: () => void;
-  } = $props();
+    label: string
+    color?: ContextColor
+    active?: boolean
+    size?: 'sm' | 'md'
+    onclick?: () => void
+  } = $props()
 
   const palette: Record<string, string> = {
     violet: '#A78BFA',
@@ -21,9 +21,9 @@
     amber: '#FBBF24',
     rose: '#FB7185',
     blue: '#60A5FA'
-  };
-  let c = $derived(palette[color] ?? color);
-  const dims = { sm: { h: 22, fs: 12, px: 8 }, md: { h: 28, fs: 13, px: 11 } }[size];
+  }
+  const c = $derived(palette[color] ?? color)
+  const dims = { sm: { h: 22, fs: 12, px: 8 }, md: { h: 28, fs: 13, px: 11 } }[size]
 </script>
 
 <span
@@ -60,6 +60,12 @@
     white-space: nowrap;
     transition: var(--transition-base);
   }
-  .chip.click { cursor: pointer; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .chip.click {
+    cursor: pointer;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
 </style>

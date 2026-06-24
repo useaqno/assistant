@@ -1,25 +1,26 @@
 <script lang="ts">
-  import { page } from '$app/stores';
-  import Icon from './Icon.svelte';
-  import Presence from './Presence.svelte';
-  import ContextChip from './ContextChip.svelte';
-  import { voice } from '$stores/voice';
-  import type { Context } from '$lib/types';
+  import { page } from '$app/stores'
+  import Icon from './Icon.svelte'
+  import Presence from './Presence.svelte'
+  import ContextChip from './ContextChip.svelte'
+  import { voice } from '$stores/voice'
+  import type { Context } from '$lib/types'
 
-  let { contexts = [], activeContext = 'cogna' }: { contexts?: Context[]; activeContext?: string } =
-    $props();
+  const {
+    contexts = [],
+    activeContext = 'cogna'
+  }: { contexts?: Context[]; activeContext?: string } = $props()
 
   const nav = [
     { href: '/', label: 'Início', icon: 'home' },
-    { href: '/persona', label: 'Persona', icon: 'persona' },
     { href: '/agenda', label: 'Agenda', icon: 'agenda' },
     { href: '/analise', label: 'Análise', icon: 'chart' },
     { href: '/vps', label: 'VPS', icon: 'server' },
     { href: '/chat', label: 'Chat', icon: 'chat' },
     { href: '/rede', label: 'Rede neural', icon: 'graph' }
-  ];
+  ]
 
-  let path = $derived($page.url.pathname);
+  const path = $derived($page.url.pathname)
   const stateLabel: Record<string, string> = {
     idle: 'Pronto',
     listening: 'Ouvindo',
@@ -27,7 +28,7 @@
     thinking: 'Pensando',
     speaking: 'Respondendo',
     confirming: 'Confirmado'
-  };
+  }
 </script>
 
 <aside class="sidebar">
@@ -45,7 +46,7 @@
   </div>
 
   <nav>
-    {#each nav as item}
+    {#each nav as item (item.href)}
       <a class="navitem" class:active={path === item.href} href={item.href}>
         <Icon
           name={item.icon}
@@ -59,7 +60,7 @@
 
   <div class="ctx-label">Contextos</div>
   <div class="contexts">
-    {#each contexts as c}
+    {#each contexts as c (c.id)}
       <ContextChip label={c.label} color={c.color} active={c.id === activeContext} size="sm" />
     {/each}
   </div>
@@ -79,7 +80,12 @@
     border-right: 1px solid var(--border-subtle);
     padding: 18px 14px;
   }
-  .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 12px; }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 8px 12px;
+  }
   .mark {
     width: 26px;
     height: 26px;
@@ -105,8 +111,18 @@
     border-radius: var(--radius-md);
     box-shadow: inset 0 1px 0 var(--highlight-top);
   }
-  .comp-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .comp-name { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text-1); }
+  .comp-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .comp-name {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-1);
+  }
   .comp-state {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -114,7 +130,11 @@
     text-transform: uppercase;
     color: var(--purple-glow);
   }
-  nav { display: flex; flex-direction: column; gap: 2px; }
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
   .navitem {
     display: flex;
     align-items: center;
@@ -129,7 +149,10 @@
     cursor: pointer;
     transition: var(--transition-base);
   }
-  .navitem:hover { color: var(--text-1); background: var(--surface-2); }
+  .navitem:hover {
+    color: var(--text-1);
+    background: var(--surface-2);
+  }
   .navitem.active {
     border-color: var(--purple-024);
     background: var(--purple-012);
@@ -143,7 +166,12 @@
     color: var(--text-3);
     padding: 20px 10px 9px;
   }
-  .contexts { display: flex; flex-direction: column; gap: 6px; padding: 0 4px; }
+  .contexts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 4px;
+  }
   .settings {
     margin-top: auto;
     display: flex;

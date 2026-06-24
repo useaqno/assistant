@@ -2,53 +2,60 @@
 // browser (`pnpm dev` without `tauri dev`): we fall back to the default daemon
 // port so the UI is fully workable in the browser too.
 
-import type { PresenceState } from './types';
+import type { PresenceState } from './types'
 
-export const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+export const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
 
-const DEFAULT_DAEMON = 'http://127.0.0.1:8787';
+const DEFAULT_DAEMON = 'http://127.0.0.1:8787'
 
-let cachedUrl: string | null = null;
+let cachedUrl: string | null = null
 
 /** Resolve the daemon base URL (asks the Rust side when inside Tauri). */
 export async function getDaemonUrl(): Promise<string> {
-  if (cachedUrl) return cachedUrl;
+  if (cachedUrl) return cachedUrl
   if (isTauri) {
     try {
-      const { invoke } = await import('@tauri-apps/api/core');
-      cachedUrl = await invoke<string>('daemon_url');
-      return cachedUrl;
+      const { invoke } = await import('@tauri-apps/api/core')
+      cachedUrl = await invoke<string>('daemon_url')
+      return cachedUrl
     } catch {
       /* fall through to default */
     }
   }
-  cachedUrl = DEFAULT_DAEMON;
-  return cachedUrl;
+  cachedUrl = DEFAULT_DAEMON
+  return cachedUrl
 }
 
 /** Fires once the sidecar has announced its port (Tauri only). */
 export async function onDaemonReady(cb: (url: string) => void): Promise<() => void> {
-  if (!isTauri) return () => {};
-  const { listen } = await import('@tauri-apps/api/event');
+  if (!isTauri) return () => {}
+  const { listen } = await import('@tauri-apps/api/event')
   return listen<{ url: string; port: number }>('daemon-ready', (e) => {
-    cachedUrl = e.payload.url;
-    cb(e.payload.url);
-  });
+    cachedUrl = e.payload.url
+    cb(e.payload.url)
+  })
+}
+
+/** Fires when the global push-to-talk hotkey is pressed (Tauri only). */
+export async function onVoiceHotkey(cb: () => void): Promise<() => void> {
+  if (!isTauri) return () => {}
+  const { listen } = await import('@tauri-apps/api/event')
+  return listen('voice-hotkey', () => cb())
 }
 
 /** Subscribe to the daemon's SSE stream of presence-state ticks. */
 export async function subscribePresence(
   cb: (state: PresenceState, level: number) => void
 ): Promise<() => void> {
-  const base = await getDaemonUrl();
-  const es = new EventSource(`${base}/v1/events`);
+  const base = await getDaemonUrl()
+  const es = new EventSource(`${base}/v1/events`)
   es.addEventListener('presence', (ev) => {
     try {
-      const data = JSON.parse((ev as MessageEvent).data);
-      cb(data.state, data.level ?? 0.6);
+      const data = JSON.parse((ev as MessageEvent).data)
+      cb(data.state, data.level ?? 0.6)
     } catch {
       /* ignore malformed frames */
     }
-  });
-  return () => es.close();
+  })
+  return () => es.close()
 }
